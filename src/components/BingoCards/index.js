@@ -33,7 +33,7 @@ const BingoCardsList = () => {
                         ballNumbers.map((ballNumber) => {
                             cell.crossed_out === false && ballNumber !== '0' && (tombola = false);
                             //DO NOT CHANGE == TO ===, THIS WILL ALLOW AUTOMATIC VALUES CONVERSION
-                            (cell.number === ballNumber) && (cell.crossed_out = true);
+                            (cell.number == ballNumber) && (cell.crossed_out = true);
                         })
                     })
                 })
