@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import axios from "axios";
 import { v4 } from 'uuid'
-import { API_URL_BINGO_CARDS_LIST, API_APP_URL } from "../../constants";
+import {API_URL_BINGO_CARDS_LIST, API_URL_BINGO_BALLS_LIST} from "../../constants";
 import "./index.scss";
 import BingoCardBackgroundImage from "../../assets/images/bingo-card-background.png";
 import Popup from "react-animated-popup";
@@ -50,7 +50,7 @@ const BingoCardsList = () => {
         let new_data =  [];
 
         await axios
-            .get(API_APP_URL + "/balls-list/")
+            .get(API_URL_BINGO_BALLS_LIST)
             .then(result => {
                 result.data.map(i => new_data.push(i.number));
             })
