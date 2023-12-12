@@ -1,17 +1,15 @@
 import React, { Component } from "react";
-import "./index.scss";
 import BingoCardsList from "../BingoCards";
-import Snowfall from 'react-snowfall'
+import Snowfall from 'react-snowfall';
+import "./index.scss";
 
 class Homepage extends Component {
     render() {
         return (
-            <div className="home-container" style={{
+            <div className="space-background" style={{
                 minHeight: 1000,
             }}>
-                <h1>Homepage</h1>
-                <p>Inserisci il tuo ID all'interno della barra di ricerca</p>
-                <div className="row-md-10">
+                <div className="min-h-screen flex justify-center">
                     <Snowfall
                         style={{
                             position: 'fixed',
@@ -19,7 +17,13 @@ class Homepage extends Component {
                             height: '100vh',
                         }}
                     />
-                    <BingoCardsList />
+                    <div className="text-center mt-24">
+                        <h1 className="text-4xl font-bold mb-4">Benvenuto sulla Homepage</h1>
+                        <p className="text-lg">Inserisci il tuo ID all'interno della barra di ricerca</p>
+                        <div className="mt-10">
+                            <BingoCardsList />
+                        </div>
+                    </div>
                 </div>
             </div>
         );

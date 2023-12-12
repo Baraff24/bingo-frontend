@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import axios from "axios";
 import { v4 } from 'uuid'
 import { API_URL_BINGO_CARDS_LIST, API_APP_URL } from "../../constants";
@@ -9,7 +9,7 @@ import Popup from "react-animated-popup";
 
 const BingoCardsList = () => {
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [data, setData] = useState(null);
     const [balls, setBalls] = useState(null);
@@ -17,11 +17,10 @@ const BingoCardsList = () => {
     const [oldBalls, setOldBalls] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [visible, setVisible] = useState(false) //POPUP
-    const [popupText, setPopupText] = useState("") //POPUP
 
 
 
-    const updateCardData = (ballNumbers) => {
+    const updateCardData = useCallback((ballNumbers) => {
 
         if(data && balls){
             let c = [];
@@ -45,9 +44,9 @@ const BingoCardsList = () => {
 
         }
 
-    }
+    }, [data, balls]);
 
-    const loadBalls = async () => {
+    const loadBalls = useCallback(async () => {
         let new_data =  [];
 
         await axios
@@ -64,18 +63,13 @@ const BingoCardsList = () => {
         oldBalls == null &&  setOldBalls({oldBalls:new_data});
         if(oldBalls != null ) {
             if (balls.balls.length !== oldBalls.oldBalls.length) {
-                const numbers = []
-                //THIS DOES NOT WORK, FOR NOW I PUSH A BAD FIX let difference = balls.balls.filter(x => !oldBalls.oldBalls.includes(x));
-                //balls.balls.map(k => (numbers.push(k)));
-                //console.log(new_data, numbers, balls)
-                //numbers.push(balls.balls[balls.balls.length - 1])
                 updateCardData(balls.balls); //Not very good fix, but it works
                 setOldBalls({oldBalls:new_data}); //IMPORTANT: It will reach this point after 3 state update, so we have a delay of 3*(interval) seconds
             }
         }
         setLoading(false);
         setError("");
-    }
+    }, [balls, oldBalls, updateCardData]);
 
 
     const loadData = (searchTerm) => {
@@ -97,7 +91,7 @@ const BingoCardsList = () => {
     useEffect(() => {
         (data == null) && loadData();
         void loadBalls();
-    }, [searchTerm]);
+    }, [searchTerm, data, loadBalls]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -107,35 +101,35 @@ const BingoCardsList = () => {
         return() => {
             clearInterval(interval);
         }
-    }, [time]);
+    }, [time, loadBalls]);
 
     if (loading) {
         return <p>Loading...</p>;
     }
 
     const searchBar = (
-        <div className="search-bar">
-            <form
-                className="row g-2"
-                onSubmit={event => {
-                    event.preventDefault();
-                    loadData(searchTerm);}
-                }
+        <form
+            onSubmit={event => {
+                event.preventDefault();
+                loadData(searchTerm);
+            }}
+        >
+            <input
+                className="border border-gray-300 text-black rounded py-2 px-4 focus:outline-blue-500 focus:shadow-outline"
+                type="text"
+                placeholder="Inserisci il tuo ID..."
+                value={searchTerm}
+                onChange={event => setSearchTerm(event.target.value)}
+            />
+            <button
+                className="ml-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+                type="button"
+                value={searchTerm}
+                onClick={() => loadData(searchTerm)}
             >
-                <div className="col-auto">
-                    <input
-                        className="form-control-lg mr-sm-4 text-primary "
-                        type="text"
-                        placeholder="Search for a Player ID"
-                        value={searchTerm}
-                        onChange={event => setSearchTerm(event.target.value)}
-                    />
-                </div>
-                <div className="col-auto">
-                    <button type="submit" className="btn-lg btn-outline-success-primary bi-card-list bg-primary text-white hover"> Search</button>
-                </div>
-            </form>
-        </div>
+                Cerca
+            </button>
+        </form>
     );
 
     if (error) {

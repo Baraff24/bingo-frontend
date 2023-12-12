@@ -9,7 +9,7 @@ class Footer extends Component {
                 <footer className="py-5 footer">
 
                     <div className="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-                        <p>&copy; 2022 AUP All rights reserved.
+                        <p>&copy; 2023 AUP All rights reserved.
                             <br/>
 
                         </p>
@@ -20,11 +20,6 @@ class Footer extends Component {
                                 </li>
                                 <li className="ms-3">
                                     <a href="https://www.facebook.com/associazioneulissepolitecnico" target="_blank" rel="noreferrer"><i className="bi bi-facebook"></i></a>
-                                </li>
-                                <li className="ms-3">
-                                    <a href="https://github.com/orgs/aupinformatica/repositories" target="_blank" rel="noreferrer">
-                                        <i className="bi bi-github"></i>
-                                    </a>
                                 </li>
                             </ul>
                         </div>

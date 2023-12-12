@@ -1,0 +1,10 @@
+.list-ul {
+  padding-top: 16px;
+}
+@media screen {
+  .list-ul {
+    padding-top: 8px;
+  }
+}
+
+/*# sourceMappingURL=index.css.map */
