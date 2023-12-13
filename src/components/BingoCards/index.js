@@ -47,7 +47,7 @@ const BingoCardsList = () => {
     }, [data, balls]);
 
     const loadBalls = useCallback(async () => {
-        let new_data =  [];
+        let new_data= [];
 
         await axios
             .get(API_URL_BINGO_BALLS_LIST)
@@ -146,74 +146,43 @@ const BingoCardsList = () => {
         );
     }
 
-    const bingoCards = data && data.map(card => {
-        // TODO: IMPLEMENT ALIGNMENT IN CARD_NUMBER, NOW FOR NUMBER >10 is bad
+    const bingoCards = data && data.map(card => (
+        <div key={v4()} className="bingo-card relative bg-cover bg-center" style={{backgroundImage: `url(${BingoCardBackgroundImage})`}}>
+            <Popup visible={visible} onClose={() => setVisible(false)}>
+                <p className="text-red-500 font-bold">TOMBOLA</p>
+            </Popup>
 
-        return (
+            <p className="margin text-white text-left font-bold">{card.card_id}</p>
 
-            <div key={v4()} className="bingo-card"
-                 style={{
-                     backgroundImage: 'url(' + BingoCardBackgroundImage + ')',
-                     backgroundPosition: "Center",
-                     backgroundSize: "cover",
-                 }}>
-                <Popup visible={visible} onClose={() => setVisible(false)}>
-                    <p style={{color:'red'}}>TOMBOLA</p>
-                </Popup>
-
-                <p className="margin" style={{color: "white", textAlign:"left", fontWeight:"bolder"}}>{card.card_id}</p>
-                {Object.keys(card).map(cards => {
-                    return (
-                        Array.from(card[cards]).map((card) => {
-                            return (
-
-                                <div className="bingo-card__row " key={v4()}>
-                                    {Array.from(card).map((card) => {
-                                        if (card.number === "0") {
-                                            return (
-                                                <div className="bingo-card__cell bingo-card__cell__empty" key={v4()}>
-                                                    {card.number}
-                                                </div>
-                                            )
-                                        }
-                                        else {
-                                            if (card.crossed_out === true) {
-                                                return (
-                                                    <div className="bingo-card__cell" key={v4()}>
-                                                        <button className="bingo-card__cell__button bingo-card__cell__number--selected">{card.number}</button>
-                                                    </div>
-                                                )
-                                            }
-                                            else {
-                                                return (
-                                                    <div className="bingo-card__cell" key={v4()}>
-                                                        <button className="bingo-card__cell__button bingo-card__cell__number">{card.number}</button>
-                                                    </div>
-                                                )
-                                            }
-                                        }
-                                    })}
-                                </div>
-
-
-                            );
-                        }))})}
-            </div>
-        );
-    });
-
+            {Object.keys(card).map(cards => (
+                Array.from(card[cards]).map((row, rowIndex) => (
+                    <div className="bingo-card__row text-stone-900 " key={v4()}>
+                        {row.map(cell => (
+                            <div
+                                key={v4()}
+                                className={`bingo-card__cell ${cell.number === "0" ? "bingo-card__cell__empty" : ""}`}
+                            >
+                                <button
+                                    className={`bingo-card__cell__button bingo-card__cell__number${cell.crossed_out ? "--selected" : ""}`}
+                                >
+                                    {cell.number}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                ))
+            ))}
+        </div>
+    ));
 
     return (
-
-        <div>
-            <div align="center">
+        <div className="text-center">
+            <div className="container mx-auto">
                 {searchBar}
-                <div className="container">
-                    {bingoCards}
-                </div>
+                {bingoCards}
             </div>
         </div>
     );
-}
+};
 
 export default BingoCardsList;

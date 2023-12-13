@@ -31,26 +31,9 @@
         font-size: 16px;
     }
 
-    @media only screen and (min-width: 600px) {
-    }
-
-    @media only screen and (min-width: 768px) {
-        width: 80%;
-        padding: 4rem;
-        font-size: 18px;
-    }
-
-    @media only screen and (min-width: 992px) {
-        width: 60%;
-        padding: 5rem;
-        font-size: 20px;
-
-    }
-
     @media only screen and (min-width: 1200px) {
-        width: 40%;
-        padding: 2.5rem;
-        font-size: 1.5rem;
+        width: 100%;
+        font-size: 20px;
     }
 }
 
@@ -135,9 +118,6 @@
         width: 35px;
     }
 
-
-
-
     @media only screen and (min-width: 1200px) {
         height: 50px;
         width: 50px;
@@ -160,11 +140,6 @@
         height: 32px;
         width: 32px;
     }
-
-
-
-
-
 
 
     @media only screen and (min-width: 1200px) {
