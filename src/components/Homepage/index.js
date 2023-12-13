@@ -18,7 +18,7 @@ class Homepage extends Component {
                         }}
                     />
                     <div className="text-center mt-24">
-                        <h1 className="text-4xl font-bold mb-4">Benvenuto sulla Homepage</h1>
+                        <h1 className="text-4xl font-bold mb-4">Benvenuto alla Tombola AUP 2023</h1>
                         <p className="text-lg">Inserisci il tuo ID all'interno della barra di ricerca</p>
                         <div className="mt-10">
                             <BingoCardsList />
