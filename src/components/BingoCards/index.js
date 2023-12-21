@@ -87,33 +87,24 @@ const BingoCardsList = () => {
         setError("");
     }, [balls, oldBalls, updateCardData]);
 
-
-        const loadBallsWithDelay = useCallback(async () => {
-        await loadBalls();
-        // Set a timeout to load new data in 20 seconds
-        setTimeout(loadBallsWithDelay, 20000);
-    }, [loadBalls]);
-
     useEffect(() => {
-        // Start loading data only if it's been more than 20 seconds since the last significant search
         const elapsedTimeSinceLastSearch = lastSearchTime
             ? Date.now() - lastSearchTime
             : null;
-        if (
-            elapsedTimeSinceLastSearch === null ||
-            elapsedTimeSinceLastSearch >= 20000
-        ) {
+
+        // Start loading data only if it's been more than 20 seconds since the last significant search
+        if (elapsedTimeSinceLastSearch === null || elapsedTimeSinceLastSearch >= 20000) {
             void loadBalls();
         }
 
         // Set a timeout to load new data in 20 seconds
-        setTimeout(loadBallsWithDelay, 20000);
+        const timeoutId = setTimeout(loadBalls, 20000);
 
         return () => {
             // Clear timeout if the component is unmounted
-            clearTimeout(loadBallsWithDelay);
+            clearTimeout(timeoutId);
         };
-    }, [lastSearchTime, loadBalls, loadBallsWithDelay]);
+    }, [lastSearchTime, loadBalls]);
 
 
     if (loading) {
@@ -124,7 +115,6 @@ const BingoCardsList = () => {
         <form
             onSubmit={event => {
                 event.preventDefault();
-                loadData(searchTerm);
             }}
         >
             <input
