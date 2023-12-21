@@ -17,6 +17,22 @@ const BingoCardsList = () => {
     const [oldBalls, setOldBalls] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [visible, setVisible] = useState(false) //POPUP
+    const [lastSearchTime, setLastSearchTime] = useState(null);
+
+    const loadData = (searchTerm) => {
+        setLastSearchTime(Date.now()); // Update the timestamp of the last significant search
+        axios
+            .get(API_URL_BINGO_CARDS_LIST + "?player_id=" + searchTerm)
+            .then((result) => {
+                setData(result.data);
+                setLoading(false);
+                setError("");
+            })
+            .catch((error) => {
+                setError(`${error}`);
+                setLoading(false);
+            });
+    };
 
 
 
@@ -72,31 +88,24 @@ const BingoCardsList = () => {
     }, [balls, oldBalls, updateCardData]);
 
 
-    const loadData = (searchTerm) => {
-        axios
-            .get(API_URL_BINGO_CARDS_LIST + "?player_id=" + searchTerm)
-            .then(result => {
-                setData(result.data);
-                setLoading(false);
-                setError("");
-            })
-            .catch(error => {
-                setError(`${error}`);
-                setLoading(false);
-            });
-
-    };
-
-
-    const loadBallsWithDelay = useCallback(async () => {
+        const loadBallsWithDelay = useCallback(async () => {
         await loadBalls();
         // Set a timeout to load new data in 20 seconds
         setTimeout(loadBallsWithDelay, 20000);
     }, [loadBalls]);
 
     useEffect(() => {
-        // Start loading data
-        void loadBalls();
+        // Start loading data only if it's been more than 20 seconds since the last significant search
+        const elapsedTimeSinceLastSearch = lastSearchTime
+            ? Date.now() - lastSearchTime
+            : null;
+        if (
+            elapsedTimeSinceLastSearch === null ||
+            elapsedTimeSinceLastSearch >= 20000
+        ) {
+            void loadBalls();
+        }
+
         // Set a timeout to load new data in 20 seconds
         setTimeout(loadBallsWithDelay, 20000);
 
@@ -104,17 +113,8 @@ const BingoCardsList = () => {
             // Clear timeout if the component is unmounted
             clearTimeout(loadBallsWithDelay);
         };
-    }, [time, loadBalls, loadBallsWithDelay]);
+    }, [lastSearchTime, loadBalls, loadBallsWithDelay]);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimer(Date.now());
-        }, 5000);
-        void loadBalls();
-        return() => {
-            clearInterval(interval);
-        }
-    }, [time, loadBalls]);
 
     if (loading) {
         return <p>Loading...</p>;
