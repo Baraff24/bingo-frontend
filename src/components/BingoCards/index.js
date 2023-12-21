@@ -17,10 +17,8 @@ const BingoCardsList = () => {
     const [oldBalls, setOldBalls] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [visible, setVisible] = useState(false) //POPUP
-    const [lastSearchTime, setLastSearchTime] = useState(null);
 
     const loadData = (searchTerm) => {
-        setLastSearchTime(Date.now()); // Update the timestamp of the last significant search
         axios
             .get(API_URL_BINGO_CARDS_LIST + "?player_id=" + searchTerm)
             .then((result) => {
@@ -88,14 +86,8 @@ const BingoCardsList = () => {
     }, [balls, oldBalls, updateCardData]);
 
     useEffect(() => {
-        const elapsedTimeSinceLastSearch = lastSearchTime
-            ? Date.now() - lastSearchTime
-            : null;
 
-        // Start loading data only if it's been more than 20 seconds since the last significant search
-        if (elapsedTimeSinceLastSearch === null || elapsedTimeSinceLastSearch >= 20000) {
-            void loadBalls();
-        }
+        void loadBalls();
 
         // Set a timeout to load new data in 20 seconds
         const timeoutId = setTimeout(loadBalls, 20000);
@@ -104,7 +96,7 @@ const BingoCardsList = () => {
             // Clear timeout if the component is unmounted
             clearTimeout(timeoutId);
         };
-    }, [lastSearchTime, loadBalls]);
+    }, [loadBalls]);
 
 
     if (loading) {
@@ -115,6 +107,7 @@ const BingoCardsList = () => {
         <form
             onSubmit={event => {
                 event.preventDefault();
+                loadData(searchTerm);
             }}
         >
             <input
