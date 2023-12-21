@@ -12,9 +12,8 @@ const BingoCardsList = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [data, setData] = useState(null);
-    const [balls, setBalls] = useState(null);
-    const [time, setTimer] = useState(Date.now());
-    const [oldBalls, setOldBalls] = useState(null);
+    const [balls, setBalls] = useState({ balls: [] });
+    const [oldBalls, setOldBalls] = useState({ oldBalls: [] });
     const [searchTerm, setSearchTerm] = useState("");
     const [visible, setVisible] = useState(false) //POPUP
 
@@ -61,42 +60,41 @@ const BingoCardsList = () => {
     }, [data, balls]);
 
     const loadBalls = useCallback(async () => {
-        let new_data= [];
+        try {
+            const result = await axios.get(API_URL_BINGO_BALLS_LIST);
+            const new_data = result.data.map(i => i.number);
 
-        await axios
-            .get(API_URL_BINGO_BALLS_LIST)
-            .then(result => {
-                result.data.map(i => new_data.push(i.number));
-            })
-            .catch(error => {
-                setError(`${error}`);
-                setLoading(false);
-            });
+            setBalls({ balls: new_data });
 
-        setBalls({balls: new_data});
-        oldBalls == null &&  setOldBalls({oldBalls:new_data});
-        if(oldBalls != null ) {
-            if (balls.balls.length !== oldBalls.oldBalls.length) {
-                updateCardData(balls.balls); //Not very good fix, but it works
-                setOldBalls({oldBalls:new_data}); //IMPORTANT: It will reach this point after 3 state update, so we have a delay of 3*(interval) seconds
+            if (oldBalls.oldBalls.length > 0 && balls.balls.length !== oldBalls.oldBalls.length) {
+                updateCardData(new_data);
+                setOldBalls({ oldBalls: new_data });
             }
+
+            setError("");
+        } catch (error) {
+            setError(`${error}`);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
-        setError("");
     }, [balls, oldBalls, updateCardData]);
 
     useEffect(() => {
-
+        // Load data
         void loadBalls();
 
-        // Set a timeout to load new data in 20 seconds
-        const timeoutId = setTimeout(loadBalls, 20000);
+        const timeoutId = setInterval(() => {
+            // Load data every 20 seconds
+            if (!loading) {
+                void loadBalls();
+            }
+        }, 20000);
 
         return () => {
-            // Clear timeout if the component is unmounted
-            clearTimeout(timeoutId);
+            // Clear interval on cleanup
+            clearInterval(timeoutId);
         };
-    }, [loadBalls]);
+    }, [loadBalls, loading]);
 
 
     if (loading) {
