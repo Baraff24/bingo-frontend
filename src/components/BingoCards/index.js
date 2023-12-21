@@ -86,8 +86,6 @@ const BingoCardsList = () => {
 
     useEffect(() => {
 
-        void loadBalls();
-
         // Set a timeout to load new data in 20 seconds
         const timeoutId = setTimeout(loadBalls, 20000);
 
