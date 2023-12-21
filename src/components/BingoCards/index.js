@@ -107,7 +107,9 @@ const BingoCardsList = () => {
         <form
             onSubmit={event => {
                 event.preventDefault();
-                loadData(searchTerm);
+                if (searchTerm.trim() !== "" && searchTerm.trim().length === 6) {
+                    loadData(searchTerm);
+                }
             }}
         >
             <input
@@ -121,7 +123,11 @@ const BingoCardsList = () => {
                 className="ml-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
                 type="button"
                 value={searchTerm}
-                onClick={() => loadData(searchTerm)}
+                onClick={() => {
+                    if (searchTerm.trim() !== "" && searchTerm.trim().length === 6) {
+                        loadData(searchTerm);
+                    }
+                }}
             >
                 Cerca
             </button>
