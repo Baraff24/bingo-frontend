@@ -87,11 +87,24 @@ const BingoCardsList = () => {
 
     };
 
-    //data shall update only when is null, otherwise we waste server resource
+
+    const loadBallsWithDelay = useCallback(async () => {
+        await loadBalls();
+        // Set a timeout to load new data in 20 seconds
+        setTimeout(loadBallsWithDelay, 20000);
+    }, [loadBalls]);
+
     useEffect(() => {
-        (data == null) && loadData();
+        // Start loading data
         void loadBalls();
-    }, [searchTerm, data, loadBalls]);
+        // Set a timeout to load new data in 20 seconds
+        setTimeout(loadBallsWithDelay, 20000);
+
+        return () => {
+            // Clear timeout if the component is unmounted
+            clearTimeout(loadBallsWithDelay);
+        };
+    }, [time, loadBalls, loadBallsWithDelay]);
 
     useEffect(() => {
         const interval = setInterval(() => {
